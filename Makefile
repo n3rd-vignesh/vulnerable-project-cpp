@@ -1,11 +1,18 @@
-CC = g++
-CFLAGS = -Wall -Wextra -pedantic -std=c++11
-TARGET = main_server
+# Makefile
 
-all: $(TARGET)
+CXX = g++
+CXXFLAGS = -Wall -Wextra -pedantic -std=c++11
 
-$(TARGET): main_server.cpp
-	$(CC) $(CFLAGS) -o $(TARGET) main_server.cpp
+all: main_server
+
+main_server: main_server.o enhanced_functionality.o
+	$(CXX) $(CXXFLAGS) -o main_server main_server.o enhanced_functionality.o
+
+main_server.o: main_server.cpp
+	$(CXX) $(CXXFLAGS) -c main_server.cpp
+
+enhanced_functionality.o: enhanced_functionality.cpp
+	$(CXX) $(CXXFLAGS) -c enhanced_functionality.cpp
 
 clean:
-	rm -f $(TARGET)
+	rm -f main_server main_server.o enhanced_functionality.o
