@@ -1,11 +1,21 @@
-CC = g++
-CFLAGS = -Wall -Wextra -pedantic -std=c++11
-TARGET = main_server
+# Makefile for compiling main_server.cpp and pencil_box.cpp securely
 
-all: $(TARGET)
+CXX = g++
+CXXFLAGS = -Wall -Wextra -pedantic -std=c++17
 
-$(TARGET): main_server.cpp
-	$(CC) $(CFLAGS) -o $(TARGET) main_server.cpp
+all: main_server pencil_box
+
+main_server: main_server.o
+    $(CXX) $(CXXFLAGS) -o main_server main_server.o
+
+main_server.o: main_server.cpp
+    $(CXX) $(CXXFLAGS) -c main_server.cpp
+
+pencil_box: pencil_box.o
+    $(CXX) $(CXXFLAGS) -o pencil_box pencil_box.o
+
+pencil_box.o: pencil_box.cpp
+    $(CXX) $(CXXFLAGS) -c pencil_box.cpp
 
 clean:
-	rm -f $(TARGET)
+    rm -f main_server pencil_box *.o

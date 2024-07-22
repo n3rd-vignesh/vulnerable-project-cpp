@@ -9,16 +9,11 @@
 
 void handleClient(int client_socket) {
     char buffer[1024] = {0};
-    int valread = read(client_socket, buffer, 1024);
+    int valread = recv(client_socket, buffer, sizeof(buffer) - 1, 0); // Using recv with size limit
     if (valread > 0) {
+        buffer[valread] = '\0'; // Ensure null termination
         std::cout << "Received data from client:\n" << buffer << std::endl;
-
-        // Vulnerable function (buffer overflow)
-        char response[256];
-        strcpy(response, buffer); // Potential buffer overflow
-
-        // Send response back to client
-        send(client_socket, response, strlen(response), 0);
+        send(client_socket, buffer, strlen(buffer), 0); // Echo back the data safely
     }
 }
 
@@ -28,22 +23,20 @@ int main() {
     int opt = 1;
     int addrlen = sizeof(address);
 
-    // Creating socket file descriptor
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
         perror("socket failed");
         exit(EXIT_FAILURE);
     }
 
-    // Forcefully attaching socket to the port 8080
     if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
         perror("setsockopt");
         exit(EXIT_FAILURE);
     }
+
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(PORT);
 
-    // Forcefully attaching socket to the port 8080
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
         perror("bind failed");
         exit(EXIT_FAILURE);
@@ -58,7 +51,6 @@ int main() {
             exit(EXIT_FAILURE);
         }
 
-        // Handle each client connection in a separate thread or process
         handleClient(client_socket);
         close(client_socket);
     }
