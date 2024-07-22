@@ -13,12 +13,12 @@ void handleClient(int client_socket) {
     if (valread > 0) {
         std::cout << "Received data from client:\n" << buffer << std::endl;
 
-        // Vulnerable function (buffer overflow)
-        char response[256];
-        strcpy(response, buffer); // Potential buffer overflow
+        // Introduce a vulnerable function (scanf without bounds checking)
+        char s[16];
+        scanf("%s", s); // Potential buffer overflow
 
         // Send response back to client
-        send(client_socket, response, strlen(response), 0);
+        send(client_socket, s, strlen(s), 0);
     }
 }
 
